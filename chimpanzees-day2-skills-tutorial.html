@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 2 Skills Tutorial: Prove It and Infer It</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15293b; --paper:#f4f8fb; --card:#fff; --line:#cddae5; --muted:#52677a;
+  --grass:#2c7a4b; --grass-bg:#e1f2e7; --sun:#f5c542; --sun-bg:#fff5d1;
+  --focus:#1d5fa8; --bad:#a33a2a; --bad-bg:#fbe9e5;
+  --head:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:1.0625rem;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:var(--head);line-height:1.15;margin:0}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+[hidden]{display:none!important}
+
+.hero{background:var(--ink);color:#fff;padding:32px 0 0}
+.hero .small{margin:0 0 8px;color:#b9cde0;font-size:.95rem}
+.hero h1{font-size:clamp(1.9rem,5.5vw,3.1rem);font-weight:800;max-width:18ch}
+.hero .name{display:flex;gap:10px;align-items:center;margin:18px 0 20px;flex-wrap:wrap}
+.hero label{color:#b9cde0}
+.hero input{font:inherit;padding:8px 12px;border-radius:8px;border:2px solid #3b5670;background:#1d3a52;color:#fff;min-width:240px}
+.hero input::placeholder{color:#8fa8bd}
+#saved{font-size:.9rem;color:#b9cde0}
+.stepper{display:flex;gap:4px;list-style:none;margin:0;padding:0;overflow-x:auto}
+.stepper button{font:inherit;cursor:pointer;border:0;background:#24435d;color:#d4e3f0;padding:10px 12px;border-radius:10px 10px 0 0;white-space:nowrap}
+.stepper button[aria-current="step"]{background:var(--paper);color:var(--ink);font-weight:700}
+.stepper button .t{display:none}
+@media(min-width:960px){.stepper button .t{display:inline;margin-left:4px;font-size:.85rem}}
+
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:18px 0 4px}
+.bar i{display:block;height:100%;width:0;background:var(--grass);transition:width .3s}
+.pt{font-size:.92rem;color:var(--muted);margin-bottom:18px}
+
+.step{padding:6px 0 10px}
+.step>h2{font-size:1.8rem;margin:6px 0 4px}
+.lead{color:var(--muted);margin:0 0 16px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:18px}
+.card h3{font-size:1.25rem;margin-bottom:6px}
+.card p{margin:.4em 0 .7em}
+.tip{background:var(--sun-bg);border-left:6px solid var(--sun);padding:12px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+.try{border-color:var(--ink)}
+.try>h3::before{content:"✏️ Try it: "}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:700px){.cols2,.cols3{grid-template-columns:1fr}}
+.mini{border:2px solid var(--line);border-radius:12px;padding:12px 14px;background:#fbfdff}
+.mini b.h{display:block;font-family:var(--head);font-size:1.1rem;margin-bottom:4px}
+.big{font-size:1.5rem}
+ul.clean{padding-left:20px;margin:6px 0}
+ul.clean li{margin-bottom:4px}
+.passage{background:#fff;border:2px dashed var(--ink);border-radius:12px;padding:14px 18px;margin:12px 0;font-size:1.05rem}
+.passage .lab{display:block;font-size:.85rem;color:var(--muted);margin-bottom:6px}
+.formula{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap;margin:12px 0}
+.formula .box{flex:1 1 150px;border:2px solid var(--ink);border-radius:12px;padding:10px 12px;text-align:center;background:#fff}
+.formula .op{align-self:center;font-family:var(--head);font-size:1.6rem;font-weight:800}
+.cer{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.cer div{border-radius:10px;padding:10px 14px;border:2px solid var(--ink)}
+.cer .c1{background:var(--sun-bg)}.cer .c2{background:var(--grass-bg)}.cer .c3{background:#e6eefb}
+
+/* mock article */
+.mock{border:3px solid var(--ink);border-radius:12px;background:#fff;padding:16px 18px;margin:12px 0}
+.mock h4{font-family:var(--head);font-size:1.5rem;margin:0 0 6px}
+.mock h5{font-family:var(--head);font-size:1.1rem;margin:12px 0 2px;color:var(--grass);border-bottom:2px solid var(--grass-bg)}
+.mock .sidebar{background:var(--sun-bg);border:2px solid var(--sun);border-radius:8px;padding:8px 12px;margin:10px 0;font-size:.97rem}
+.mock .diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;background:var(--grass-bg);border-radius:10px;padding:12px;margin:10px 0}
+.mock .node{text-align:center;background:#fff;border:2px solid var(--ink);border-radius:10px;padding:8px 12px;font-size:.92rem}
+.mock .node .e{font-size:2rem;display:block}
+.mock .arrow{font-size:1.4rem}
+.mock .cap{font-size:.9rem;font-style:italic;color:var(--muted);text-align:center;margin-top:-4px}
+.mock .timeline{display:flex;gap:0;margin:12px 0;flex-wrap:wrap}
+.mock .timeline div{flex:1 1 150px;border-top:6px solid var(--ink);padding:6px 8px;font-size:.92rem}
+.mock .timeline b{display:block}
+.tag{display:inline-block;background:var(--ink);color:#fff;font-size:.75rem;border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+.term{font-weight:800;color:var(--focus)}
+
+/* questions */
+.q{border-top:1px solid var(--line);padding:12px 0}
+.q:first-of-type{border-top:0}
+.qt{font-weight:700;margin:0 0 8px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts.row{flex-direction:row;flex-wrap:wrap}
+.opt{font:inherit;text-align:left;cursor:pointer;background:#fff;color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:9px 14px}
+.opt:hover:not(:disabled){background:var(--sun-bg);border-color:var(--sun)}
+.opt.sel{background:var(--sun-bg);border-color:var(--ink);font-weight:700}
+.opt.right{background:var(--grass-bg);border-color:var(--grass);color:var(--ink);font-weight:700;opacity:1}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad);color:var(--bad);opacity:1;text-decoration:line-through}
+.opt:disabled{cursor:default}
+.fb{margin-top:8px;font-size:.98rem}
+.fb.ok{background:var(--grass-bg);border-radius:8px;padding:8px 12px}
+.fb.no{background:var(--bad-bg);border-radius:8px;padding:8px 12px;color:#6b2518}
+
+.btn{font:inherit;cursor:pointer;border-radius:999px;border:2px solid var(--ink);background:#fff;color:var(--ink);padding:7px 16px;text-decoration:none;display:inline-block}
+.btn:hover:not(:disabled){background:var(--sun-bg)}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.primary:hover:not(:disabled){background:#25435c}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.small{padding:3px 12px;font-size:.92rem}
+.chipsrow{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.navrow{display:flex;justify-content:space-between;gap:10px;margin:10px 0 40px}
+
+textarea,select,input[type=text]{font:inherit;color:var(--ink);width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:8px;background:#fff}
+textarea{min-height:90px;resize:vertical}
+textarea:focus,select:focus,input[type=text]:focus{border-color:var(--focus)}
+label.f{display:block;font-weight:700;margin:12px 0 4px}
+.count{font-size:.9rem;color:var(--muted);margin-top:3px}
+.count.ok{color:var(--grass);font-weight:700}
+.checks{list-style:none;padding:0;margin:10px 0 0;line-height:1.8}
+.checks li::before{content:"○";display:inline-block;width:24px;color:var(--muted)}
+.checks li.ok::before{content:"✓";color:var(--grass);font-weight:700}
+.checks li.ok{color:var(--grass)}
+.conf{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:6px;align-items:center;margin:6px 0}
+.conf .c{font:inherit;cursor:pointer;border:2px solid var(--line);background:#fff;border-radius:8px;padding:6px 4px;text-align:center;font-size:.92rem}
+.conf .c[aria-pressed="true"]{background:var(--grass-bg);border-color:var(--grass);font-weight:700}
+@media(max-width:600px){.conf{grid-template-columns:1fr 1fr 1fr}.conf>span{grid-column:1/-1;font-weight:700;margin-top:6px}}
+.rcard{border:2px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px;background:#fbfdff}
+.rcard h4{font-family:var(--head);margin:0 0 4px}
+
+.result{border:3px solid var(--ink);border-radius:14px;padding:16px 18px;margin-top:16px;background:#fff}
+.result .score{font-family:var(--head);font-size:2.2rem;font-weight:800}
+.sk{display:flex;justify-content:space-between;gap:10px;border-top:1px dashed var(--line);padding:6px 0;flex-wrap:wrap}
+.shot{border:3px solid var(--ink);border-radius:12px;background:#fff;padding:18px 20px;margin-top:14px}
+.shot-head{border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:12px}
+.shot-item{margin-bottom:12px}
+.shot-item b{display:block;font-size:.95rem;color:var(--muted)}
+.shot-item p{margin:2px 0 0;white-space:pre-wrap}
+.warnbox{background:var(--sun-bg);border-left:6px solid var(--sun);padding:10px 14px;border-radius:0 8px 8px 0;margin:10px 0}
+.finish{background:var(--grass-bg);border-left:6px solid var(--grass);border-radius:0 10px 10px 0;padding:14px 18px;margin-top:16px}
+.finish ol{margin:6px 0 0;padding-left:22px}
+ol.how{padding-left:22px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{.stepper,.navrow,.btn,.hero .name{display:none!important}.step[hidden]{display:block!important}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="small">Grade 6 ELA · Unit 2 · Day 2 skills for “My Life with the Chimpanzees”</p>
+    <h1>Prove It and Infer It 🕵️</h1>
+    <div class="name">
+      <label for="studentName">Your name</label>
+      <input type="text" id="studentName" placeholder="First and last name" autocomplete="off">
+      <span id="saved" aria-live="polite"></span>
+    </div>
+    <ol class="stepper" id="stepper" aria-label="Tutorial steps"></ol>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="bar" aria-hidden="true"><i id="barfill"></i></div>
+  <div class="pt" id="ptext"></div>
+
+<!-- STEP 0 -->
+<section class="step" data-title="Start" data-emoji="🎯">
+  <h2>🎯 Start here</h2>
+  <p class="lead">These are the skills you will use while you read “My Life with the Chimpanzees” on Day 2.</p>
+
+  <div class="card">
+    <h3>How this tutorial works</h3>
+    <ol class="how">
+      <li>📖 <b>Learn:</b> Read a short lesson.</li>
+      <li>✏️ <b>Try it:</b> Answer questions. Wrong? You get a hint and can try again!</li>
+      <li>🔗 <b>Apply it:</b> Use the skills on the selection you read in Realize.</li>
+      <li>🏆 <b>Final check</b> and 📸 <b>Turn it in</b> to Canvas.</li>
+    </ol>
+    <p class="tip">🧭 Open this page in <b>Chrome</b> (not Incognito) and use the <b>same iPad</b> every time. Your work saves on the iPad. You work on your own, and you do <b>not</b> need your book.</p>
+  </div>
+
+  <div class="card">
+    <h3>Today I can…</h3>
+    <ul class="clean">
+      <li>🔍 <b>Cite evidence</b> to explain and prove my thinking.</li>
+      <li>📚 Use strategies to <b>understand hard, complex texts</b>.</li>
+      <li>💡 Make <b>inferences</b> from clues in the text.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>How confident am I right now?</h3>
+    <p>Tap one for each skill. There are no wrong answers. It shows up on your screenshot.</p>
+    <div id="conf"></div>
+  </div>
+</section>
+
+<!-- STEP 1 -->
+<section class="step" data-title="Evidence" data-emoji="🔍" hidden>
+  <h2>🔍 Cite evidence</h2>
+  <p class="lead">Standard: ELA.K12.EE.1.1 · Cite evidence to explain and justify reasoning</p>
+
+  <div class="card">
+    <h3>Don’t just say it. Prove it!</h3>
+    <p>A <b>claim</b> is what you think. <b>Evidence</b> is the proof from the text. <b>Reasoning</b> explains <i>how</i> the proof backs up your claim.</p>
+    <div class="cer">
+      <div class="c1">💪 <b>Claim:</b> The author is patient.</div>
+      <div class="c2">🔍 <b>Evidence:</b> The text says she sat still on the bank from sunrise until noon.</div>
+      <div class="c3">💡 <b>Reasoning:</b> This shows she was willing to wait quietly for hours, and that is what patience means.</div>
+    </div>
+    <ul class="clean">
+      <li>📝 <b>Paraphrase:</b> say the evidence in your own words.</li>
+      <li>❝ <b>Short quote:</b> copy a few exact words and put them in quotation marks.</li>
+      <li>🗣️ Starters: <i>“According to the text…”</i>, <i>“The author says…”</i>, <i>“This shows…”</i></li>
+    </ul>
+    <p class="tip">✅ <b>Strong evidence</b> directly proves your claim. Evidence that is just a random detail does not.</p>
+  </div>
+
+  <div class="card try">
+    <h3>Find the proof</h3>
+    <div class="passage">
+      <span class="lab">Practice passage written for this tutorial (not from the selection)</span>
+      The first week at the river camp, the otters ignored me. I sat on the muddy bank from sunrise until noon, keeping very still, and wrote down everything: how they dove, how they rolled, how they called to each other with high, squeaky whistles. On the eighth day, a young otter surfaced near my boots and sniffed the air. It stared at me for a full minute before it slid back into the water. My legs were numb and my notebook was soaked, but I was grinning. The otters had decided I was not a threat.
+    </div>
+    <div data-qs="evidence"></div>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section class="step" data-title="Complex Text" data-emoji="📚" hidden>
+  <h2>📚 Read complex texts</h2>
+  <p class="lead">Standard: ELA.K12.EE.2.1 · Read and comprehend grade-level complex texts</p>
+
+  <div class="card">
+    <h3>Tough text? You have a toolbox!</h3>
+    <p>Hard texts have long sentences, big words, and lots of ideas. Good readers <b>pause and check</b>: <i>“Does this make sense?”</i> If not, they use a tool.</p>
+    <div class="cols3">
+      <div class="mini"><b class="h">✂️ Chunk it</b>Break a long sentence at commas and dashes. Read one piece at a time.</div>
+      <div class="mini"><b class="h">🔁 Reread</b>Go back and read it slowly again.</div>
+      <div class="mini"><b class="h">🧩 Context clues</b>Use nearby words to figure out a new word.</div>
+      <div class="mini"><b class="h">❓ Ask questions</b>“Who? What? Why?”</div>
+      <div class="mini"><b class="h">📝 Summarize</b>Say the main idea in your own words after each paragraph.</div>
+      <div class="mini"><b class="h">🎨 Picture it</b>Make a movie in your mind.</div>
+    </div>
+  </div>
+
+  <div class="card try">
+    <h3>Use your tools</h3>
+    <div class="passage">
+      <span class="lab">Practice passage written for this tutorial (not from the selection)</span>
+      Primatologists—scientists who study monkeys and apes—must often endure conditions that would discourage most people. Humidity thickens the air until clothing clings like a second skin; leeches drop from leaves; downpours erase trails within minutes. Yet the observer’s task is paradoxical: to learn how animals behave naturally, the researcher must become, in effect, unnoticeable. Any sudden movement can alter the very behavior she hopes to record.
+    </div>
+    <div data-qs="complex"></div>
+  </div>
+</section>
+
+<!-- STEP 3 -->
+<section class="step" data-title="Inference" data-emoji="💡" hidden>
+  <h2>💡 Make inferences</h2>
+  <p class="lead">Standard: ELA.K12.EE.3.1 · Make inferences to support comprehension</p>
+
+  <div class="card">
+    <h3>Read between the lines</h3>
+    <p>An <b>inference</b> is a smart conclusion about something the author does <i>not</i> say directly. It is not a wild guess. You build it from clues.</p>
+    <div class="formula">
+      <div class="box">🔎 <b>Text clues</b><br>what the author wrote</div><div class="op">+</div>
+      <div class="box">🧠 <b>What I know</b><br>from real life</div><div class="op">=</div>
+      <div class="box">💡 <b>Inference</b><br>what it probably means</div>
+    </div>
+    <p><b>Example:</b> “Sam checked the sky, packed an umbrella, and put on his boots.” <i>Clues:</i> umbrella and boots. <i>I know:</i> people use those when it rains. <i>Inference:</i> Sam thinks it will rain.</p>
+    <p class="tip">🗣️ Starter: <i>“I read that… and I know that… so I infer…”</i></p>
+  </div>
+
+  <div class="card try">
+    <h3>What can you infer?</h3>
+    <div data-qs="inference"></div>
+  </div>
+
+  <div class="card">
+    <h3>✍️ Write your own inference</h3>
+    <div class="passage">
+      <span class="lab">Mystery scene written for this tutorial</span>
+      The tent flap was open. Muddy boot prints led to the river, and the lantern was missing from its hook.
+    </div>
+    <label class="f" for="tInfer">What do you infer? Use the starter.</label>
+    <div class="chipsrow"><button type="button" class="btn small" data-ins="tInfer">I read that</button><button type="button" class="btn small" data-ins="tInfer">and I know that</button><button type="button" class="btn small" data-ins="tInfer">so I infer</button></div>
+    <textarea id="tInfer" data-t="infer"></textarea>
+    <ul class="checks" id="iChecks">
+      <li data-c="word">Uses the word “infer”</li>
+      <li data-c="len">Has at least 12 words (clue + what I know + inference)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- STEP 4 -->
+<section class="step" data-title="Apply It" data-emoji="🔗" hidden>
+  <h2>🔗 Apply it to “My Life with the Chimpanzees”</h2>
+  <p class="lead">Do this <b>after</b> you read the selection in Realize. Use your own words. If you quote, use only a few exact words in quotation marks.</p>
+
+  <div class="card">
+    <h3>1. Cite evidence 🔍</h3>
+    <p>Write a <b>claim</b> about the author (a trait, like curious or patient). Then give <b>evidence</b> from the selection and your <b>reasoning</b>.</p>
+    <div class="chipsrow"><button type="button" class="btn small" data-ins="a1">According to the text,</button><button type="button" class="btn small" data-ins="a1">This shows that</button></div>
+    <label class="f" for="a1">My claim, evidence, and reasoning</label>
+    <textarea id="a1" data-t="a1"></textarea>
+  </div>
+  <div class="card">
+    <h3>2. Make an inference 💡</h3>
+    <p>Find a place where the author does <b>not</b> say something directly. Write the clue, what you know, and your inference.</p>
+    <div class="chipsrow"><button type="button" class="btn small" data-ins="a2">I read that</button><button type="button" class="btn small" data-ins="a2">and I know that</button><button type="button" class="btn small" data-ins="a2">so I infer</button></div>
+    <label class="f" for="a2">My inference</label>
+    <textarea id="a2" data-t="a2"></textarea>
+  </div>
+  <ul class="checks" id="aChecks">
+    <li data-c="a1">Evidence response has at least 10 words</li>
+    <li data-c="a2">Inference response has at least 10 words</li>
+  </ul>
+</section>
+
+<!-- STEP 5 -->
+<section class="step" data-title="Final Check" data-emoji="🏆" hidden>
+  <h2>🏆 Show what you know</h2>
+  <p class="lead">Six questions. Tap one answer for each, then tap <b>Check my score</b>. You can retake it.</p>
+  <div class="card"><div id="final"></div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn primary" id="checkFinal" type="button">Check my score</button>
+      <button class="btn" id="retakeFinal" type="button" hidden>Retake</button>
+    </div>
+    <div id="result"></div>
+  </div>
+</section>
+
+<!-- STEP 6 -->
+<section class="step" data-title="Turn In" data-emoji="📸" hidden>
+  <h2>📸 Turn it in</h2>
+  <p class="lead">Take a screenshot of your work and upload it to Canvas.</p>
+
+  <div class="card">
+    <h3>1. Check your work</h3>
+    <ul class="checks" id="turnChecks" aria-live="polite"></ul>
+  </div>
+
+  <div class="card">
+    <h3>2. Open your screenshot page</h3>
+    <p>This page puts your name, your score, and your writing in one place.</p>
+    <button class="btn primary" id="showShot" type="button">Show my work</button>
+    <div id="shot" class="shot" hidden></div>
+  </div>
+
+  <div class="card">
+    <h3>3. Take your screenshot 📸</h3>
+    <p>On your iPad: press the <b>top button and the volume-up button</b> at the same time. (iPad with a Home button? Press the <b>top button and Home</b>.) Tap the little picture in the corner, tap <b>Done</b>, then <b>Save to Photos</b>. Long page? Scroll and take more than one screenshot.</p>
+  </div>
+
+  <div class="card">
+    <h3>4. Upload it to Canvas 📤</h3>
+    <ol class="how">
+      <li>🖥️ Open Canvas and go to our class.</li>
+      <li>📁 Open this assignment.</li>
+      <li>📤 Tap <b>Submit Assignment</b>, then <b>Choose File</b>, then <b>Photo Library</b>, and pick your screenshot.</li>
+      <li>✅ Tap <b>Submit Assignment</b> again and look for the green “Submitted” message.</li>
+    </ol>
+    <p style="margin-top:10px"><a class="btn primary" id="canvasLink" target="_blank" rel="noopener" hidden>Open the Canvas assignment</a></p>
+
+    <div class="finish">
+      <b>🎉 Finished? Here is what to do next!</b>
+      <ol>
+        <li>✅ Make sure your screenshot is uploaded to Canvas.</li>
+        <li>🐒 Work on your <b>Vocabulary for “My Life with the Chimpanzees.”</b></li>
+        <li>📚 Then open the <b>Canvas module</b> and work on any other activities posted for you.</li>
+      </ol>
+      <p style="margin:6px 0 0">✋ Not sure what to do? Ask your teacher!</p>
+    </div>
+  </div>
+</section>
+
+  <div class="navrow">
+    <button class="btn" id="backBtn" type="button">← Back</button>
+    <button class="btn primary" id="nextBtn" type="button">Next →</button>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:30px">Teacher-made practice for Savvas myPerspectives Florida, Grade 6, Unit 2. Not published by Savvas. Practice passages were written for this tutorial.
+    <button class="btn small" id="clearAll" type="button" style="margin-left:8px">Clear my work</button></p>
+</main>
+
+<script>
+(function(){
+  var KEY='chimp-day2-skills-v1';
+  /* TEACHER SETTINGS
+     CANVAS_URL: paste your Canvas assignment link (must start with https://).
+       Or share this page as  yourpage.html?canvas=https://...
+     */
+  var CANVAS_URL='';
+
+  var SK={evidence:'Citing evidence',complex:'Reading complex text',inference:'Making inferences'};
+  var SKSTEP={evidence:1,complex:2,inference:3};
+
+  var P={
+    evidence:[
+      {id:'e1',q:'1. Claim: “The author is patient.” Which sentence is the strongest evidence?',o:['I sat on the muddy bank from sunrise until noon, keeping very still.','They called to each other with high, squeaky whistles.','My notebook was soaked.','The otters were at the river camp.'],a:0,w:'Sitting still for hours is direct proof of patience. The other details do not prove it.',hint:'Which detail shows her waiting?'},
+      {id:'e2',q:'2. Which reasoning best connects that evidence to the claim?',o:['Otters are cute animals.','This shows she was willing to wait quietly for hours, and that is what patience means.','Muddy banks are cold.','The author likes notebooks.'],a:1,w:'Good reasoning explains HOW the evidence proves the claim.'},
+      {id:'e3',q:'3. Which sentence starts citing evidence the best way?',o:['I just think she is patient.','Everybody knows she waited.','According to the text, the author sat still on the bank from sunrise until noon.','She waited, whatever.'],a:2,w:'“According to the text” tells your reader the proof comes from the passage.'},
+      {id:'e4',q:'4. Which is the best paraphrase (your own words) of “On the eighth day, a young otter surfaced near my boots”?',o:['After a week, a young otter came up close to her feet.','The otters were not there on day eight.','She wore boots on day eight.','A young otter ran away on the first day.'],a:0,w:'A paraphrase keeps the meaning but uses different words.'}
+    ],
+    complex:[
+      {id:'c1',q:'1. You reach the word “paradoxical.” Which fix-up strategy helps most?',o:['Skip the whole passage.','Reread the sentence and use the clues after the colon to figure it out.','Guess and keep going without thinking.','Stop reading.'],a:1,w:'After the colon, the author says researchers must be unnoticeable to see natural behavior. That sounds opposite, so “paradoxical” means seeming to contradict itself.'},
+      {id:'c2',q:'2. The second sentence is very long. Which tool helps?',o:['Chunk it: read each piece between the semicolons.','Read it once, very fast.','Ignore it.','Read only the last word.'],a:0,w:'Chunking breaks a long sentence into smaller pieces that are easier to understand.'},
+      {id:'c3',q:'3. What is the main idea of the passage?',o:['Leeches are dangerous animals.','Researchers face hard conditions and must stay unnoticed so animals act naturally.','Monkeys live in humid places only.','Trails disappear after storms.'],a:1,w:'The passage ends with the big idea: the researcher must be unnoticeable.'},
+      {id:'c4',q:'4. Which detail best proves that researchers must be unnoticeable?',o:['Leeches drop from leaves.','Humidity thickens the air.','Any sudden movement can alter the very behavior she hopes to record.','Downpours erase trails.'],a:2,w:'That sentence directly explains why being noticed is a problem.'}
+    ],
+    inference:[
+      {id:'i1',q:'1. “Maya stared at the empty feeder. She zipped her jacket, grabbed the seed from the shed, and trudged through the snow without a word. When she came back, a crowd of chickadees was waiting on the fence.” What can you infer?',o:['Maya feeds the birds regularly and they know it.','Maya hates birds.','Maya is lost in the snow.','The shed is on fire.'],a:0,w:'She goes out in the snow to refill the feeder, and the birds are waiting. She cares for them and does it often.'},
+      {id:'i2',q:'2. “The dog sat by the door every evening at five. When the car did not come, his ears dropped and he whined.” What can you infer?',o:['The dog is sleepy.','The dog expects his owner home at five and misses them.','The dog wants to go to the vet.','The dog hates doors.'],a:1,w:'He waits at the same time every day, and he is sad when the car does not come.'},
+      {id:'i3',q:'3. “Marcus read the same page three times, then closed the book and stared out the window while his lunch sat untouched.” What can you infer?',o:['Marcus is very hungry.','Marcus loves his book.','Marcus is worried or distracted by something.','Marcus is about to go to sleep.'],a:2,w:'Rereading, staring away, and not eating are clues that his mind is on a problem.'},
+      {id:'i4',q:'4. Which clue best supports the inference “Maya cares about birds”?',o:['It was snowing.','She grabbed the seed and walked through the snow without a word.','The shed was nearby.','She zipped her jacket.'],a:1,w:'She goes out in bad weather to feed them, a strong clue that she cares.'}
+    ]
+  };
+
+  var FINAL=[
+    {id:'F1',sk:'evidence',q:'Claim: “The scientist is brave.” Which evidence best supports it?',o:['She walked into the dark forest alone, even though she heard growling.','She wore a blue jacket.','The forest had tall trees.','She likes tea.'],a:0,w:'Walking toward danger shows bravery.'},
+    {id:'F2',sk:'evidence',q:'Which sentence best introduces evidence from a text?',o:['I feel like she waited.','According to the passage, the researcher waited three hours without moving.','Anyone could see it.','Whatever the text says.'],a:1,w:'It names the source and gives a specific detail.'},
+    {id:'F3',sk:'complex',q:'You realize you cannot explain what a long, confusing paragraph said. What should you do first?',o:['Keep reading and hope it gets easier.','Stop, reread it in smaller chunks, and summarize each chunk.','Skip the rest of the text.','Close the book.'],a:1,w:'Pausing, chunking, and summarizing help you repair understanding.'},
+    {id:'F4',sk:'complex',q:'Which strategy helps you figure out an unknown word?',o:['Use context clues in the nearby sentences.','Skip every hard word.','Read faster.','Look at the page number.'],a:0,w:'Nearby words and sentences often hint at a word’s meaning.'},
+    {id:'F5',sk:'inference',q:'“Puddles covered the ground, and Ana carried a dripping umbrella into the house.” What can you infer?',o:['It had been raining.','Ana is going swimming.','The house is on fire.','It is a hot, dry day.'],a:0,w:'Puddles plus a dripping umbrella are clues that it rained.'},
+    {id:'F6',sk:'inference',q:'What is an inference?',o:['A word for a main character','A conclusion based on text clues plus what I already know','A copy of a sentence from the text','A random guess'],a:1,w:'An inference uses clues and your own knowledge.'}
+  ];
+
+  /* ---------- state ---------- */
+  var S={name:'',step:0,p:{},fin:{},finDone:false,t:{},c:{}};
+  try{ var raw=localStorage.getItem(KEY); if(raw) S=Object.assign(S,JSON.parse(raw)); }catch(e){}
+  ['p','fin','t','c'].forEach(function(k){ S[k]=S[k]||{}; });
+  var savedEl=document.getElementById('saved'), tmr=null;
+  function save(){
+    clearTimeout(tmr);
+    tmr=setTimeout(function(){
+      try{ localStorage.setItem(KEY,JSON.stringify(S)); savedEl.textContent='Saved on this iPad'; }
+      catch(e){ savedEl.textContent='Could not save here. Do not close this page.'; }
+    },250);
+  }
+  function h(tag,attrs,kids){
+    var el=document.createElement(tag);
+    if(attrs) Object.keys(attrs).forEach(function(k){
+      if(k==='class') el.className=attrs[k];
+      else if(k==='text') el.textContent=attrs[k];
+      else if(k.slice(0,2)==='on') el.addEventListener(k.slice(2),attrs[k]);
+      else el.setAttribute(k,attrs[k]);
+    });
+    (kids||[]).forEach(function(c){ el.appendChild(c); });
+    return el;
+  }
+  function $(id){ return document.getElementById(id); }
+  function words(s){ s=(s||'').trim(); return s?s.split(/\s+/).length:0; }
+  function T(k){ return (S.t[k]||'').trim(); }
+
+  /* ---------- name ---------- */
+  var nameEl=$('studentName'); nameEl.value=S.name||'';
+  nameEl.addEventListener('input',function(){ S.name=nameEl.value; save(); turnChecks(); });
+
+  /* ---------- steps ---------- */
+  var steps=Array.prototype.slice.call(document.querySelectorAll('.step'));
+  var stepper=$('stepper');
+  steps.forEach(function(sec,i){
+    var b=h('button',{type:'button','aria-label':'Step '+(i+1)+': '+sec.dataset.title},[document.createTextNode(sec.dataset.emoji),h('span',{class:'t',text:sec.dataset.title})]);
+    b.addEventListener('click',function(){ show(i); });
+    stepper.appendChild(h('li',{},[b]));
+  });
+  function show(i){
+    i=Math.max(0,Math.min(steps.length-1,i));
+    steps.forEach(function(s,j){ s.hidden=j!==i; });
+    Array.prototype.forEach.call(stepper.querySelectorAll('button'),function(b,j){ if(j===i) b.setAttribute('aria-current','step'); else b.removeAttribute('aria-current'); });
+    $('backBtn').disabled=i===0; $('nextBtn').disabled=i===steps.length-1;
+    S.step=i; save(); window.scrollTo({top:0}); if(i===steps.length-1) turnChecks();
+  }
+  $('backBtn').addEventListener('click',function(){ show(S.step-1); });
+  $('nextBtn').addEventListener('click',function(){ show(S.step+1); });
+
+  /* ---------- confidence ---------- */
+  var CL=['😬 New to me','🙂 Getting it','😎 Got it'];
+  Object.keys(SK).forEach(function(k){
+    var row=h('div',{class:'conf'},[h('span',{text:SK[k]})]);
+    CL.forEach(function(lab,n){
+      var b=h('button',{type:'button',class:'c','aria-pressed':S.c[k]===n?'true':'false',text:lab});
+      b.addEventListener('click',function(){
+        S.c[k]=n; Array.prototype.forEach.call(row.querySelectorAll('.c'),function(x,m){ x.setAttribute('aria-pressed',m===n?'true':'false'); }); save();
+      });
+      row.appendChild(b);
+    });
+    $('conf').appendChild(row);
+  });
+
+  /* ---------- practice questions ---------- */
+  function renderQ(q){
+    var st=S.p[q.id]||(S.p[q.id]={tries:0,done:false,first:false,wrong:[]});
+    var opts=h('div',{class:'opts'+(q.o.length===2?' row':'')});
+    var fb=h('div',{class:'fb','aria-live':'polite'});
+    function lock(){ Array.prototype.forEach.call(opts.querySelectorAll('button'),function(x){ x.disabled=true; }); }
+    q.o.forEach(function(txt,i){
+      var b=h('button',{type:'button',class:'opt',text:txt});
+      if(st.wrong.indexOf(i)>-1){ b.classList.add('wrong'); b.disabled=true; }
+      if(st.done&&i===q.a) b.classList.add('right');
+      b.addEventListener('click',function(){
+        if(st.done) return;
+        st.tries++;
+        if(i===q.a){ st.done=true; st.first=(st.tries===1); b.classList.add('right'); fb.className='fb ok'; fb.textContent='✅ '+q.w+(st.first?' ⭐ First try!':''); lock(); }
+        else{ st.wrong.push(i); b.classList.add('wrong'); b.disabled=true; fb.className='fb no'; fb.textContent='🤔 Not quite. Try another answer.'+(q.hint?' Hint: '+q.hint:''); }
+        save(); progress();
+      });
+      opts.appendChild(b);
+    });
+    if(st.done){ fb.className='fb ok'; fb.textContent='✅ '+q.w+(st.first?' ⭐ First try!':''); lock(); }
+    return h('div',{class:'q'},[h('p',{class:'qt',text:q.q}),opts,fb]);
+  }
+  document.querySelectorAll('[data-qs]').forEach(function(box){
+    P[box.dataset.qs].forEach(function(q){ box.appendChild(renderQ(q)); });
+  });
+
+  /* ---------- free text + starter chips ---------- */
+  document.querySelectorAll('[data-t]').forEach(function(el){
+    var k=el.dataset.t; if(S.t[k]!=null) el.value=S.t[k];
+    el.addEventListener('input',function(){ S.t[k]=el.value; checks(); progress(); save(); });
+  });
+  document.querySelectorAll('[data-ins]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var ta=$(b.dataset.ins); ta.value=(ta.value&&!/\s$/.test(ta.value)?ta.value+' ':ta.value)+b.textContent+' ';
+      ta.focus(); ta.dispatchEvent(new Event('input'));
+    });
+  });
+  /* ---------- checks for written work ---------- */
+  function allTrue(o){ return Object.keys(o).every(function(k){ return o[k]; }); }
+  function inferOK(){ var s=S.t.infer||''; return {word:/\binfer(s|red)?\b/i.test(s),len:words(s)>=12}; }
+  function applyOK(){ return {a1:words(S.t.a1)>=10,a2:words(S.t.a2)>=10}; }
+  function checks(){
+    [['iChecks',inferOK()],['aChecks',applyOK()]].forEach(function(p){
+      document.querySelectorAll('#'+p[0]+' li').forEach(function(li){ li.className=p[1][li.dataset.c]?'ok':''; });
+    });
+  }
+
+  /* ---------- final quiz ---------- */
+  function renderFinal(){
+    var box=$('final'); box.innerHTML='';
+    FINAL.forEach(function(q,n){
+      var opts=h('div',{class:'opts'});
+      q.o.forEach(function(txt,i){
+        var b=h('button',{type:'button',class:'opt',text:txt});
+        if(S.fin[q.id]===i) b.classList.add('sel');
+        if(S.finDone){
+          b.disabled=true;
+          if(i===q.a){ b.classList.remove('sel'); b.classList.add('right'); }
+          else if(S.fin[q.id]===i){ b.classList.remove('sel'); b.classList.add('wrong'); }
+        }
+        b.addEventListener('click',function(){
+          if(S.finDone) return;
+          S.fin[q.id]=i;
+          Array.prototype.forEach.call(opts.querySelectorAll('button'),function(x,m){ x.classList.toggle('sel',m===i); });
+          updateCheckBtn(); save();
+        });
+        opts.appendChild(b);
+      });
+      var kids=[h('p',{class:'qt',text:(n+1)+'. '+q.q}),opts];
+      if(S.finDone){ var ok=S.fin[q.id]===q.a; kids.push(h('div',{class:'fb '+(ok?'ok':'no'),text:(ok?'✅ ':'❌ ')+q.w})); }
+      box.appendChild(h('div',{class:'q'},kids));
+    });
+    updateCheckBtn(); renderResult();
+  }
+  function updateCheckBtn(){
+    var all=FINAL.every(function(q){ return S.fin[q.id]!=null; });
+    $('checkFinal').disabled=!all||S.finDone;
+    $('checkFinal').hidden=S.finDone; $('retakeFinal').hidden=!S.finDone;
+  }
+  function finalScore(){
+    var by={}, tot=0;
+    FINAL.forEach(function(q){ by[q.sk]=by[q.sk]||{c:0,n:0}; by[q.sk].n++; if(S.fin[q.id]===q.a){ by[q.sk].c++; tot++; } });
+    return {tot:tot,by:by};
+  }
+  function renderResult(){
+    var r=$('result'); r.innerHTML='';
+    if(!S.finDone) return;
+    var f=finalScore(), n=FINAL.length;
+    var msg=f.tot/n>=0.8?'🏆 Awesome! You really know your stuff!':(f.tot/n>=0.6?'💪 Almost there! Review the skills marked below, then retake.':'🔁 Let’s review! Go back to the steps below and try again.');
+    var box=h('div',{class:'result'},[h('div',{class:'score',text:f.tot+' / '+n}),h('p',{text:msg})]);
+    Object.keys(f.by).forEach(function(k){
+      var row=h('div',{class:'sk'},[h('span',{text:SK[k]+': '+f.by[k].c+' of '+f.by[k].n})]);
+      if(f.by[k].c<f.by[k].n) row.appendChild(h('button',{type:'button',class:'btn small',text:'Review step '+(SKSTEP[k]+1),onclick:function(){ show(SKSTEP[k]); }}));
+      box.appendChild(row);
+    });
+    r.appendChild(box);
+  }
+  $('checkFinal').addEventListener('click',function(){ S.finDone=true; save(); renderFinal(); progress(); $('result').scrollIntoView({behavior:'smooth'}); });
+  $('retakeFinal').addEventListener('click',function(){ S.fin={}; S.finDone=false; save(); renderFinal(); progress(); });
+
+  /* ---------- progress ---------- */
+  function allPractice(){ var a=[]; Object.keys(P).forEach(function(k){ P[k].forEach(function(q){ a.push(q); }); }); return a; }
+  function progress(){
+    var pr=allPractice(), done=0;
+    pr.forEach(function(q){ if(S.p[q.id]&&S.p[q.id].done) done++; });
+    var total=pr.length+3;
+    if(S.finDone) done++;
+    if(allTrue(inferOK())) done++;
+    if(allTrue(applyOK())) done++;
+    $('barfill').style.width=Math.round(done/total*100)+'%';
+    $('ptext').textContent=done+' of '+total+' tasks finished';
+  }
+
+  /* ---------- turn in ---------- */
+  function turnChecks(){
+    var ul=$('turnChecks'); ul.innerHTML='';
+    var pr=allPractice(), d=0; pr.forEach(function(q){ if(S.p[q.id]&&S.p[q.id].done) d++; });
+    var nm=(S.name||'').trim();
+    [[nm?'My name is at the top of the page':'Add your name at the top of the page',!!nm],
+     ['Practice questions: '+d+' of '+pr.length+' finished',d===pr.length],
+     ['My inference is written',allTrue(inferOK())],
+     ['I applied the skills to the selection',allTrue(applyOK())],
+     ['Final check taken'+(S.finDone?': '+finalScore().tot+' of '+FINAL.length:''),!!S.finDone]
+    ].forEach(function(c){ ul.appendChild(h('li',{class:c[1]?'ok':'',text:c[0]})); });
+  }
+  $('showShot').addEventListener('click',function(){
+    var box=$('shot'); box.innerHTML=''; box.hidden=false;
+    var nm=(S.name||'').trim();
+    var pr=allPractice(), d=0; pr.forEach(function(q){ if(S.p[q.id]&&S.p[q.id].done) d++; });
+    box.appendChild(h('div',{class:'shot-head'},[
+      h('h3',{text:'Day 2 Skills Tutorial: “My Life with the Chimpanzees”'}),
+      h('div',{text:'Name: '+(nm||'(add your name at the top of the page)')}),
+      h('div',{text:new Date().toLocaleString()}),
+      h('div',{text:'Practice questions finished: '+d+' of '+pr.length})
+    ]));
+    if(!nm) box.appendChild(h('div',{class:'warnbox',text:'Your name is missing. Scroll up, add it, then tap “Show my work” again before you take your screenshot.'}));
+    function item(label,val){ if(val&&String(val).trim()) box.appendChild(h('div',{class:'shot-item'},[h('b',{text:label}),h('p',{text:val})])); }
+    item('How I felt at the start',Object.keys(SK).map(function(k){ return SK[k]+': '+(S.c[k]!=null?CL[S.c[k]]:'(not marked)'); }).join('\n'));
+    item('Practice results',Object.keys(P).map(function(k){ var n=0; P[k].forEach(function(q){ if(S.p[q.id]&&S.p[q.id].first) n++; }); return SK[k]+': '+n+' of '+P[k].length+' right on the first try'; }).join('\n'));
+    if(S.finDone){ var f=finalScore(); item('Final check score',f.tot+' of '+FINAL.length+'\n'+Object.keys(f.by).map(function(k){ return SK[k]+': '+f.by[k].c+' of '+f.by[k].n; }).join('\n')); }
+    else item('Final check','Not taken yet');
+    item('My inference (mystery scene)',T('infer'));
+    item('Apply it: cite evidence',T('a1'));
+    item('Apply it: inference',T('a2'));
+    box.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  (function(){
+    var url=CANVAS_URL, q=null;
+    try{ q=new URLSearchParams(location.search).get('canvas'); }catch(e){}
+    if(!url&&q) url=q;
+    var a=$('canvasLink');
+    if(url&&/^https:\/\//i.test(url)){ a.href=url; a.hidden=false; }
+  })();
+
+  /* ---------- clear ---------- */
+  var cb=$('clearAll'), ct=null;
+  cb.addEventListener('click',function(){
+    if(cb.dataset.armed){ try{ localStorage.removeItem(KEY); }catch(e){} location.reload(); }
+    else{ cb.dataset.armed='1'; cb.textContent='Click again to erase everything'; ct=setTimeout(function(){ delete cb.dataset.armed; cb.textContent='Clear my work'; },4000); }
+  });
+
+  /* ---------- init ---------- */
+  renderFinal(); checks(); progress();
+  show(S.step||0);
+})();
+</script>
+</body>
+</html>
